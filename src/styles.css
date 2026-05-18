@@ -203,7 +203,9 @@ textarea {
   border: 1px solid #cfd8c2;
   border-radius: 7px;
   color: #1f2933;
+  max-width: 100%;
   min-height: 40px;
+  min-width: 0;
   padding: 9px 10px;
   width: 100%;
 }
@@ -280,23 +282,54 @@ textarea {
 }
 
 .inventoryRow {
-  align-items: center;
+  align-items: end;
+  border: 1px solid #eef1e8;
+  border-radius: 8px;
   display: grid;
-  gap: 8px;
-  grid-template-columns: minmax(150px, 1.4fr) minmax(130px, 0.9fr) minmax(110px, 0.8fr) 110px 90px 92px;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  min-width: 0;
+  padding: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  min-width: 0;
+}
+
+.field span {
+  color: #667085;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .newProduct {
-  border-top: 1px solid #eef1e8;
+  background: #fbfcf8;
+  border-color: #d7dfcd;
   margin-top: 6px;
-  padding-top: 12px;
+}
+
+.newProduct .iconText {
+  align-self: end;
+  width: 100%;
 }
 
 .toggle {
   align-items: center;
-  display: flex;
-  gap: 8px;
+  display: grid;
+  gap: 5px 8px;
+  grid-template-columns: auto 1fr;
   margin: 0;
+  min-height: 61px;
+}
+
+.toggle span {
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .toggle input {
@@ -359,5 +392,14 @@ textarea {
   .inventoryRow,
   .cartItem {
     grid-template-columns: 1fr;
+  }
+
+  .inventoryRow {
+    align-items: stretch;
+  }
+
+  .toggle {
+    align-items: center;
+    min-height: 40px;
   }
 }

@@ -27,43 +27,74 @@ export function InventoryPanel({
       <div className="inventory">
         {products.map((product) => (
           <div className="inventoryRow" key={product.id}>
-            <input value={product.name} onChange={(event) => onSaveProduct({ ...product, name: event.target.value })} />
-            <select
-              value={product.productGroupId ?? 0}
-              onChange={(event) => {
-                const groupId = Number(event.target.value);
-                const group = groups.find((item) => item.id === groupId);
-                onSaveProduct({ ...product, productGroupId: groupId, category: group?.name ?? product.category });
-              }}
-            >
-              <option value={0}>Sin categoria</option>
-              {groups.map((group) => (
-                <option key={group.id} value={group.id}>{group.name}</option>
-              ))}
-            </select>
-            <input value={product.measure} onChange={(event) => onSaveProduct({ ...product, measure: event.target.value })} />
-            <input type="number" value={product.price} onChange={(event) => onSaveProduct({ ...product, price: Number(event.target.value) })} />
-            <input type="number" value={product.stock} onChange={(event) => onSaveProduct({ ...product, stock: Number(event.target.value) })} />
-            <label className="toggle">
+            <label className="field">
+              <span>Producto</span>
+              <input value={product.name} onChange={(event) => onSaveProduct({ ...product, name: event.target.value })} />
+            </label>
+            <label className="field">
+              <span>Categoria</span>
+              <select
+                value={product.productGroupId ?? 0}
+                onChange={(event) => {
+                  const groupId = Number(event.target.value);
+                  const group = groups.find((item) => item.id === groupId);
+                  onSaveProduct({ ...product, productGroupId: groupId, category: group?.name ?? product.category });
+                }}
+              >
+                <option value={0}>Sin categoria</option>
+                {groups.map((group) => (
+                  <option key={group.id} value={group.id}>{group.name}</option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              <span>Medida</span>
+              <input value={product.measure} onChange={(event) => onSaveProduct({ ...product, measure: event.target.value })} />
+            </label>
+            <label className="field">
+              <span>Precio</span>
+              <input type="number" value={product.price} onChange={(event) => onSaveProduct({ ...product, price: Number(event.target.value) })} />
+            </label>
+            <label className="field">
+              <span>Stock</span>
+              <input type="number" value={product.stock} onChange={(event) => onSaveProduct({ ...product, stock: Number(event.target.value) })} />
+            </label>
+            <label className="toggle field">
+              <span>Estado</span>
               <input type="checkbox" checked={product.isActive} onChange={(event) => onSaveProduct({ ...product, isActive: event.target.checked })} />
               Activo
             </label>
           </div>
         ))}
         <div className="inventoryRow newProduct">
-          <input value={draft.name} onChange={(event) => onDraftChange({ ...draft, name: event.target.value })} placeholder="Nuevo producto" />
-          <select
-            value={draft.productGroupId}
-            onChange={(event) => onDraftChange({ ...draft, productGroupId: Number(event.target.value) })}
-          >
-            <option value={0}>Categoria</option>
-            {groups.map((group) => (
-              <option key={group.id} value={group.id}>{group.name}</option>
-            ))}
-          </select>
-          <input value={draft.measure} onChange={(event) => onDraftChange({ ...draft, measure: event.target.value })} placeholder="Medida" />
-          <input type="number" value={draft.price} onChange={(event) => onDraftChange({ ...draft, price: Number(event.target.value) })} placeholder="Precio" />
-          <input type="number" value={draft.stock} onChange={(event) => onDraftChange({ ...draft, stock: Number(event.target.value) })} placeholder="Stock" />
+          <label className="field">
+            <span>Producto</span>
+            <input value={draft.name} onChange={(event) => onDraftChange({ ...draft, name: event.target.value })} placeholder="Nuevo producto" />
+          </label>
+          <label className="field">
+            <span>Categoria</span>
+            <select
+              value={draft.productGroupId}
+              onChange={(event) => onDraftChange({ ...draft, productGroupId: Number(event.target.value) })}
+            >
+              <option value={0}>Categoria</option>
+              {groups.map((group) => (
+                <option key={group.id} value={group.id}>{group.name}</option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            <span>Medida</span>
+            <input value={draft.measure} onChange={(event) => onDraftChange({ ...draft, measure: event.target.value })} placeholder="Medida" />
+          </label>
+          <label className="field">
+            <span>Precio</span>
+            <input type="number" value={draft.price} onChange={(event) => onDraftChange({ ...draft, price: Number(event.target.value) })} placeholder="Precio" />
+          </label>
+          <label className="field">
+            <span>Stock</span>
+            <input type="number" value={draft.stock} onChange={(event) => onDraftChange({ ...draft, stock: Number(event.target.value) })} placeholder="Stock" />
+          </label>
           <button className="iconText" onClick={onAddProduct}>
             <Plus size={18} />
             Agregar
