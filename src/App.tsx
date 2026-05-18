@@ -7,10 +7,12 @@ import { InventoryPanel } from './components/InventoryPanel';
 import { MenuPanel } from './components/MenuPanel';
 import { OrdersPanel } from './components/OrdersPanel';
 import { ProductDetailPanel } from './components/ProductDetailPanel';
+import { ProductsPage } from './components/ProductsPage';
 import { Topbar } from './components/Topbar';
 import './App.css';
 import {
   API_URL,
+  addStock,
   createGroup,
   createOrder,
   createProduct,
@@ -51,10 +53,12 @@ export function App() {
   const [message, setMessage] = useState('');
   const [groupDraft, setGroupDraft] = useState<GroupDraft>(emptyGroupDraft);
   const [draft, setDraft] = useState<ProductDraft>(emptyProductDraft);
+  const [stockAdditions, setStockAdditions] = useState<Record<number, number>>({});
   const [stockDiscounts, setStockDiscounts] = useState<Record<number, StockDiscountDraft>>({});
   const [history, setHistory] = useState<ActivityLog[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isHistoryPage, setIsHistoryPage] = useState(false);
+  const [isProductsPage, setIsProductsPage] = useState(false);
 
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0), [cart]);
 
@@ -176,6 +180,30 @@ export function App() {
     }));
   }
 
+  function updateStockAddition(productId: number, quantity: number) {
+    setStockAdditions((current) => ({
+      ...current,
+      [productId]: Math.max(1, quantity || 1)
+    }));
+  }
+
+  async function addProductStock(product: Product) {
+    const quantity = Math.max(1, stockAdditions[product.id] ?? 1);
+
+    try {
+      await addStock(product.id, quantity);
+      setMessage(`${quantity} ${product.measure} de ${product.name} agregado al stock.`);
+      setStockAdditions((current) => ({
+        ...current,
+        [product.id]: 1
+      }));
+      await loadData(selectedGroup?.id);
+      await loadHistory();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'No se pudo agregar stock.');
+    }
+  }
+
   async function removeStock(product: Product) {
     const current = stockDiscounts[product.id] ?? { quantity: 1, reason: 'courtesy' };
     const quantity = Math.max(1, Math.min(current.quantity, product.stock));
@@ -184,7 +212,7 @@ export function App() {
       await discountStock(product.id, quantity, current.reason);
       setMessage(
         `${quantity} ${product.measure} de ${product.name} descontado por ${
-          current.reason === 'courtesy' ? 'cortesia de la casa' : 'producto dañado'
+          current.reason === 'courtesy' ? 'cortesia de la casa' : 'producto danado'
         }.`
       );
       setStockDiscounts((discounts) => ({
@@ -241,6 +269,10 @@ export function App() {
     return <HistoryPage items={history} onBack={() => setIsHistoryPage(false)} />;
   }
 
+  if (isProductsPage) {
+    return <ProductsPage products={allProducts} onBack={() => setIsProductsPage(false)} />;
+  }
+
   return (
     <main>
       <Topbar onOpenHistory={openHistory} />
@@ -275,10 +307,14 @@ export function App() {
           draft={draft}
           groups={groups}
           products={allProducts}
+          stockAdditions={stockAdditions}
           stockDiscounts={stockDiscounts}
           onAddProduct={addProduct}
           onDraftChange={setDraft}
+          onOpenProducts={() => setIsProductsPage(true)}
           onSaveProduct={saveProduct}
+          onStockAddition={addProductStock}
+          onStockAdditionChange={updateStockAddition}
           onStockDiscount={removeStock}
           onStockDiscountChange={updateStockDiscount}
         />

@@ -77,6 +77,20 @@ export async function discountStock(productId: number, quantity: number, reason:
   return response.json() as Promise<Product>;
 }
 
+export async function addStock(productId: number, quantity: number) {
+  const response = await fetch(`${API_URL}/products/${productId}/stock-additions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ quantity, reason: 'manual' })
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response, 'No se pudo agregar stock.'));
+  }
+
+  return response.json() as Promise<Product>;
+}
+
 export async function createProduct(draft: ProductDraft, category: string) {
   await fetch(`${API_URL}/products`, {
     method: 'POST',

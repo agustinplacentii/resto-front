@@ -3,6 +3,18 @@
   gap: 10px;
 }
 
+.inventoryHeader {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.inventoryHeader .sectionTitle {
+  margin-bottom: 0;
+}
+
 .inventoryCard {
   border: 1px solid #eef1e8;
   border-radius: 8px;
@@ -47,17 +59,33 @@
   width: 100%;
 }
 
-.stockDiscount {
+.stockMovements {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr);
+}
+
+.stockMovement {
   align-items: end;
-  background: #fffaf1;
-  border: 1px solid #efd8aa;
   border-radius: 8px;
   display: grid;
   gap: 10px;
-  grid-template-columns: minmax(90px, 0.5fr) minmax(180px, 1fr) minmax(140px, 0.7fr);
   padding: 10px;
 }
 
+.stockAddition {
+  background: #f6faee;
+  border: 1px solid #d8e7bc;
+  grid-template-columns: minmax(90px, 1fr) minmax(150px, 0.85fr);
+}
+
+.stockDiscount {
+  background: #fffaf1;
+  border: 1px solid #efd8aa;
+  grid-template-columns: minmax(90px, 0.5fr) minmax(180px, 1fr) minmax(140px, 0.7fr);
+}
+
+.stockMoveButton,
 .stockDiscountButton {
   align-self: end;
   width: 100%;
@@ -83,11 +111,18 @@
 }
 
 @media (max-width: 680px) {
+  .inventoryHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .inventoryRow {
     align-items: stretch;
     grid-template-columns: 1fr;
   }
 
+  .stockMovements,
+  .stockAddition,
   .stockDiscount {
     align-items: stretch;
     grid-template-columns: 1fr;

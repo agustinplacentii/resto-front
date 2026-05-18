@@ -17,7 +17,7 @@ export function HistoryPage({ items, onBack }: HistoryPageProps) {
           Volver
         </button>
         <div>
-          <p className="eyebrow">Restaurant local</p>
+          <p className="eyebrow">Saoko</p>
           <h1>Historial completo</h1>
         </div>
       </header>
