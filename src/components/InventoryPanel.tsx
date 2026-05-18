@@ -56,7 +56,15 @@ export function InventoryPanel({
             <div className="inventoryRow">
               <label className="field">
                 <span>Producto</span>
-                <input value={product.name} onChange={(event) => onSaveProduct({ ...product, name: event.target.value })} />
+                <input
+                  defaultValue={product.name}
+                  onBlur={(event) =>
+                    onSaveProduct({
+                      ...product,
+                      name: event.target.value
+                    })
+                  }
+                />
               </label>
               <label className="field">
                 <span>Categoria</span>
@@ -76,15 +84,41 @@ export function InventoryPanel({
               </label>
               <label className="field">
                 <span>Medida</span>
-                <input value={product.measure} onChange={(event) => onSaveProduct({ ...product, measure: event.target.value })} />
+                <input
+                  defaultValue={product.measure}
+                  onBlur={(event) =>
+                    onSaveProduct({
+                      ...product,
+                      measure: event.target.value
+                    })
+                  }
+                />
               </label>
               <label className="field">
                 <span>Precio</span>
-                <input type="number" value={product.price} onChange={(event) => onSaveProduct({ ...product, price: Number(event.target.value) })} />
+                <input
+                  type="number"
+                  defaultValue={product.price}
+                  onBlur={(event) =>
+                    onSaveProduct({
+                      ...product,
+                      price: Number(event.target.value)
+                    })
+                  }
+                />
               </label>
               <label className="field">
                 <span>Stock</span>
-                <input type="number" value={product.stock} onChange={(event) => onSaveProduct({ ...product, stock: Number(event.target.value) })} />
+                <input
+                  type="number"
+                  defaultValue={product.stock}
+                  onBlur={(event) =>
+                    onSaveProduct({
+                      ...product,
+                      stock: Number(event.target.value)
+                    })
+                  }
+                />
               </label>
               <label className="toggle field">
                 <span>Estado</span>
@@ -132,7 +166,7 @@ export function InventoryPanel({
                     })}
                   >
                     <option value="courtesy">Cortesia de la casa</option>
-                    <option value="damaged">Producto danado</option>
+                    <option value="damaged">Producto dañado</option>
                   </select>
                 </label>
                 <button className="iconText stockDiscountButton" onClick={() => onStockDiscount(product)} disabled={product.stock <= 0}>

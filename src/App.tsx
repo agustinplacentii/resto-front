@@ -212,7 +212,7 @@ export function App() {
       await discountStock(product.id, quantity, current.reason);
       setMessage(
         `${quantity} ${product.measure} de ${product.name} descontado por ${
-          current.reason === 'courtesy' ? 'cortesia de la casa' : 'producto danado'
+          current.reason === 'courtesy' ? 'cortesia de la casa' : 'producto dañado'
         }.`
       );
       setStockDiscounts((discounts) => ({

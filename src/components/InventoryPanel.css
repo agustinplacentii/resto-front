@@ -20,7 +20,9 @@
   border-radius: 8px;
   display: grid;
   gap: 10px;
+  overflow: hidden;
   padding: 12px;
+  width: 100%;
 }
 
 .inventoryRow {
@@ -46,6 +48,12 @@
   text-transform: uppercase;
 }
 
+.field input,
+.field select {
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .newProduct {
   background: #fbfcf8;
   border: 1px solid #d7dfcd;
@@ -60,16 +68,19 @@
 }
 
 .stockMovements {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr);
+  width: 100%;
 }
 
 .stockMovement {
   align-items: end;
   border-radius: 8px;
   display: grid;
+  flex: 1 1 320px;
   gap: 10px;
+  min-width: 280px;
   padding: 10px;
 }
 
@@ -82,13 +93,26 @@
 .stockDiscount {
   background: #fffaf1;
   border: 1px solid #efd8aa;
-  grid-template-columns: minmax(90px, 0.5fr) minmax(180px, 1fr) minmax(140px, 0.7fr);
+  grid-template-columns:
+    minmax(90px, 0.5fr)
+    minmax(180px, 1fr)
+    minmax(140px, 0.7fr);
 }
 
 .stockMoveButton,
 .stockDiscountButton {
   align-self: end;
   width: 100%;
+}
+
+.productActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.deleteButton {
+  color: #d11a2a;
 }
 
 .toggle {
@@ -121,15 +145,24 @@
     grid-template-columns: 1fr;
   }
 
-  .stockMovements,
+  .stockMovement,
   .stockAddition,
   .stockDiscount {
     align-items: stretch;
     grid-template-columns: 1fr;
+    min-width: 100%;
   }
 
   .toggle {
     align-items: center;
     min-height: 40px;
+  }
+
+  .productActions {
+    justify-content: stretch;
+  }
+
+  .deleteButton {
+    width: 100%;
   }
 }
