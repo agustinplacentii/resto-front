@@ -1,20 +1,20 @@
-import { RefreshCw } from 'lucide-react';
+import { History } from 'lucide-react';
 import './Topbar.css';
 
 type TopbarProps = {
-  onRefresh: () => void;
+  onOpenHistory: () => void;
 };
 
-export function Topbar({ onRefresh }: TopbarProps) {
+export function Topbar({ onOpenHistory }: TopbarProps) {
   return (
     <header className="topbar">
       <div>
         <p className="eyebrow">Restaurant local</p>
         <h1>Pedidos, productos y factura</h1>
       </div>
-      <button className="iconText" onClick={onRefresh} title="Actualizar datos">
-        <RefreshCw size={18} />
-        Actualizar
+      <button className="iconText" onClick={onOpenHistory} title="Abrir historial">
+        <History size={18} />
+        Historial
       </button>
     </header>
   );

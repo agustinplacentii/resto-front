@@ -1,4 +1,4 @@
-import type { GroupDraft, Order, Product, ProductDraft, ProductGroup } from '../types';
+import type { ActivityLog, GroupDraft, Order, Product, ProductDraft, ProductGroup } from '../types';
 
 export const API_ORIGIN = 'http://localhost:5088';
 export const API_URL = `${API_ORIGIN}/api`;
@@ -105,4 +105,9 @@ export async function updateOrderStatus(order: Order, status: Order['status']) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status })
   });
+}
+
+export async function getHistory() {
+  const response = await fetch(`${API_URL}/history`);
+  return response.json() as Promise<ActivityLog[]>;
 }

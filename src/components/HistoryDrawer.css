@@ -1,0 +1,43 @@
+.drawerLayer {
+  inset: 0;
+  position: fixed;
+  z-index: 20;
+}
+
+.drawerBackdrop {
+  background: rgba(31, 41, 51, 0.28);
+  border: 0;
+  height: 100%;
+  left: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.historyDrawer {
+  background: #ffffff;
+  border-left: 1px solid #dde4d2;
+  box-shadow: -16px 0 40px rgba(36, 48, 31, 0.16);
+  display: grid;
+  gap: 14px;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  max-width: 440px;
+  overflow: auto;
+  padding: 20px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: min(440px, 100%);
+}
+
+.drawerHeader {
+  align-items: start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.drawerFullButton {
+  width: 100%;
+}

@@ -55,3 +55,10 @@ export type GroupDraft = {
   name: string;
   description: string;
 };
+
+export type ActivityLog = {
+  id: number;
+  type: 'stock-added' | 'stock-removed' | 'invoice-created' | string;
+  description: string;
+  createdAt: string;
+};

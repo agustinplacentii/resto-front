@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CartPanel } from './components/CartPanel';
 import { CategoryPanel } from './components/CategoryPanel';
+import { HistoryDrawer } from './components/HistoryDrawer';
+import { HistoryPage } from './components/HistoryPage';
 import { InventoryPanel } from './components/InventoryPanel';
 import { MenuPanel } from './components/MenuPanel';
 import { OrdersPanel } from './components/OrdersPanel';
@@ -13,13 +15,14 @@ import {
   createOrder,
   createProduct,
   discountStock,
+  getHistory,
   getProduct,
   getProductsByGroup,
   getRestaurantData,
   updateOrderStatus,
   updateProduct
 } from './services/restaurantApi';
-import type { CartItem, GroupDraft, Order, Product, ProductDraft, ProductGroup } from './types';
+import type { ActivityLog, CartItem, GroupDraft, Order, Product, ProductDraft, ProductGroup } from './types';
 
 const emptyGroupDraft: GroupDraft = { name: '', description: '' };
 const emptyProductDraft: ProductDraft = {
@@ -49,6 +52,9 @@ export function App() {
   const [groupDraft, setGroupDraft] = useState<GroupDraft>(emptyGroupDraft);
   const [draft, setDraft] = useState<ProductDraft>(emptyProductDraft);
   const [stockDiscounts, setStockDiscounts] = useState<Record<number, StockDiscountDraft>>({});
+  const [history, setHistory] = useState<ActivityLog[]>([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isHistoryPage, setIsHistoryPage] = useState(false);
 
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0), [cart]);
 
@@ -65,8 +71,22 @@ export function App() {
   }
 
   useEffect(() => {
-    loadData().catch(() => setMessage('No pude conectar con la API. Revisa que el backend este corriendo.'));
+    Promise.all([loadData(), loadHistory()]).catch(() => setMessage('No pude conectar con la API. Revisa que el backend este corriendo.'));
   }, []);
+
+  async function loadHistory() {
+    setHistory(await getHistory());
+  }
+
+  async function openHistory() {
+    await loadHistory();
+    setIsHistoryOpen(true);
+  }
+
+  function openHistoryPage() {
+    setIsHistoryOpen(false);
+    setIsHistoryPage(true);
+  }
 
   async function openGroup(group: ProductGroup) {
     setSelectedGroup(group);
@@ -133,6 +153,7 @@ export function App() {
       setNotes('');
       setMessage(`Pedido #${order.id} guardado. Ya podes imprimir la factura.`);
       await loadData(selectedGroup?.id);
+      await loadHistory();
       window.open(`${API_URL}/orders/${order.id}/invoice.pdf`, '_blank');
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'No se pudo guardar el pedido.');
@@ -142,6 +163,7 @@ export function App() {
   async function saveProduct(product: Product) {
     await updateProduct(product);
     await loadData(selectedGroup?.id);
+    await loadHistory();
   }
 
   function updateStockDiscount(productId: number, discount: StockDiscountDraft) {
@@ -170,6 +192,7 @@ export function App() {
         [product.id]: { ...current, quantity: 1 }
       }));
       await loadData(selectedGroup?.id);
+      await loadHistory();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'No se pudo descontar stock.');
     }
@@ -189,6 +212,7 @@ export function App() {
       productGroupId: selectedGroup?.id ?? groups[0]?.id ?? 0
     });
     await loadData(selectedGroup?.id);
+    await loadHistory();
   }
 
   async function addGroup() {
@@ -213,9 +237,13 @@ export function App() {
     await loadData(selectedGroup?.id);
   }
 
+  if (isHistoryPage) {
+    return <HistoryPage items={history} onBack={() => setIsHistoryPage(false)} />;
+  }
+
   return (
     <main>
-      <Topbar onRefresh={() => loadData()} />
+      <Topbar onOpenHistory={openHistory} />
 
       {message && <div className="notice">{message}</div>}
 
@@ -256,6 +284,13 @@ export function App() {
         />
         <OrdersPanel orders={orders} onUpdateStatus={updateStatus} />
       </section>
+
+      <HistoryDrawer
+        isOpen={isHistoryOpen}
+        items={history}
+        onClose={() => setIsHistoryOpen(false)}
+        onOpenFullPage={openHistoryPage}
+      />
     </main>
   );
 }

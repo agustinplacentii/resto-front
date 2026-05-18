@@ -1,0 +1,48 @@
+.historyList {
+  display: grid;
+  gap: 10px;
+}
+
+.historyItem {
+  align-items: start;
+  border: 1px solid #eef1e8;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 38px 1fr;
+  padding: 12px;
+}
+
+.historyItem strong {
+  display: block;
+  line-height: 1.35;
+}
+
+.historyItem time {
+  color: #667085;
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.historyIcon {
+  align-items: center;
+  background: #f3f6ec;
+  border-radius: 7px;
+  color: #607044;
+  display: inline-flex;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.historyIcon.stock-removed {
+  background: #fff0e8;
+  color: #a3462a;
+}
+
+.historyIcon.invoice-created {
+  background: #eef4ff;
+  color: #2f5f9f;
+}
