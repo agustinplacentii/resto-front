@@ -3,15 +3,20 @@
   gap: 10px;
 }
 
-.inventoryRow {
-  align-items: end;
+.inventoryCard {
   border: 1px solid #eef1e8;
   border-radius: 8px;
   display: grid;
   gap: 10px;
+  padding: 12px;
+}
+
+.inventoryRow {
+  align-items: end;
+  display: grid;
+  gap: 10px;
   grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   min-width: 0;
-  padding: 12px;
 }
 
 .field {
@@ -31,11 +36,29 @@
 
 .newProduct {
   background: #fbfcf8;
-  border-color: #d7dfcd;
+  border: 1px solid #d7dfcd;
+  border-radius: 8px;
   margin-top: 6px;
+  padding: 12px;
 }
 
 .newProduct .iconText {
+  align-self: end;
+  width: 100%;
+}
+
+.stockDiscount {
+  align-items: end;
+  background: #fffaf1;
+  border: 1px solid #efd8aa;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(90px, 0.5fr) minmax(180px, 1fr) minmax(140px, 0.7fr);
+  padding: 10px;
+}
+
+.stockDiscountButton {
   align-self: end;
   width: 100%;
 }
@@ -61,6 +84,11 @@
 
 @media (max-width: 680px) {
   .inventoryRow {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .stockDiscount {
     align-items: stretch;
     grid-template-columns: 1fr;
   }

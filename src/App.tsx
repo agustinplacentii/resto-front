@@ -12,6 +12,7 @@ import {
   createGroup,
   createOrder,
   createProduct,
+  discountStock,
   getProduct,
   getProductsByGroup,
   getRestaurantData,
@@ -29,6 +30,11 @@ const emptyProductDraft: ProductDraft = {
   productGroupId: 0
 };
 
+type StockDiscountDraft = {
+  quantity: number;
+  reason: 'courtesy' | 'damaged';
+};
+
 export function App() {
   const [groups, setGroups] = useState<ProductGroup[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -42,6 +48,7 @@ export function App() {
   const [message, setMessage] = useState('');
   const [groupDraft, setGroupDraft] = useState<GroupDraft>(emptyGroupDraft);
   const [draft, setDraft] = useState<ProductDraft>(emptyProductDraft);
+  const [stockDiscounts, setStockDiscounts] = useState<Record<number, StockDiscountDraft>>({});
 
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0), [cart]);
 
@@ -137,6 +144,37 @@ export function App() {
     await loadData(selectedGroup?.id);
   }
 
+  function updateStockDiscount(productId: number, discount: StockDiscountDraft) {
+    setStockDiscounts((current) => ({
+      ...current,
+      [productId]: {
+        quantity: Math.max(1, discount.quantity || 1),
+        reason: discount.reason
+      }
+    }));
+  }
+
+  async function removeStock(product: Product) {
+    const current = stockDiscounts[product.id] ?? { quantity: 1, reason: 'courtesy' };
+    const quantity = Math.max(1, Math.min(current.quantity, product.stock));
+
+    try {
+      await discountStock(product.id, quantity, current.reason);
+      setMessage(
+        `${quantity} ${product.measure} de ${product.name} descontado por ${
+          current.reason === 'courtesy' ? 'cortesia de la casa' : 'producto dañado'
+        }.`
+      );
+      setStockDiscounts((discounts) => ({
+        ...discounts,
+        [product.id]: { ...current, quantity: 1 }
+      }));
+      await loadData(selectedGroup?.id);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'No se pudo descontar stock.');
+    }
+  }
+
   async function addProduct() {
     if (!draft.name.trim() || draft.productGroupId === 0) {
       setMessage('Crea o selecciona una categoria antes de guardar el producto.');
@@ -209,9 +247,12 @@ export function App() {
           draft={draft}
           groups={groups}
           products={allProducts}
+          stockDiscounts={stockDiscounts}
           onAddProduct={addProduct}
           onDraftChange={setDraft}
           onSaveProduct={saveProduct}
+          onStockDiscount={removeStock}
+          onStockDiscountChange={updateStockDiscount}
         />
         <OrdersPanel orders={orders} onUpdateStatus={updateStatus} />
       </section>
