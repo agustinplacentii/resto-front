@@ -2,6 +2,7 @@ import { FileText } from 'lucide-react';
 import { API_ORIGIN } from '../services/restaurantApi';
 import type { Order } from '../types';
 import { money } from '../utils/formatters';
+import './OrdersPanel.css';
 
 type OrdersPanelProps = {
   orders: Order[];

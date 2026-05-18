@@ -1,4 +1,5 @@
 import { RefreshCw } from 'lucide-react';
+import './Topbar.css';
 
 type TopbarProps = {
   onRefresh: () => void;

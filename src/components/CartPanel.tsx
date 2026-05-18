@@ -1,6 +1,7 @@
 import { Check, ShoppingCart, Trash2 } from 'lucide-react';
 import type { CartItem } from '../types';
 import { money } from '../utils/formatters';
+import './CartPanel.css';
 
 type CartPanelProps = {
   cart: CartItem[];

@@ -1,0 +1,14 @@
+.topbar {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto 20px;
+  max-width: 1500px;
+}
+
+@media (max-width: 680px) {
+  .topbar {
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

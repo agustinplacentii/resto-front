@@ -1,5 +1,6 @@
 import { Package, Plus } from 'lucide-react';
 import type { Product, ProductDraft, ProductGroup } from '../types';
+import './InventoryPanel.css';
 
 type InventoryPanelProps = {
   draft: ProductDraft;

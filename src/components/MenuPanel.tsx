@@ -1,6 +1,7 @@
 import { ArrowLeft, Utensils } from 'lucide-react';
 import type { Product, ProductGroup } from '../types';
 import { money } from '../utils/formatters';
+import './MenuPanel.css';
 
 type MenuPanelProps = {
   groups: ProductGroup[];

@@ -1,0 +1,53 @@
+.groupGrid,
+.productGrid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+
+.groupCard,
+.productButton {
+  background: #fbfcf8;
+  border: 1px solid #d7dfcd;
+  border-radius: 8px;
+  color: #1f2933;
+  display: grid;
+  gap: 7px;
+  min-height: 134px;
+  padding: 14px;
+  text-align: left;
+}
+
+.groupCard:hover,
+.productButton:hover {
+  border-color: #607044;
+}
+
+.groupCard strong,
+.productButton strong {
+  font-size: 18px;
+}
+
+.groupCard span,
+.productButton span {
+  color: #667085;
+}
+
+.productButton b {
+  color: #a3462a;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.backButton {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cfd8c2;
+  border-radius: 7px;
+  color: #263228;
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  min-height: 40px;
+  padding: 9px 12px;
+}

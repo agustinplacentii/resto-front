@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react';
 import type { GroupDraft } from '../types';
+import './CategoryPanel.css';
 
 type CategoryPanelProps = {
   draft: GroupDraft;

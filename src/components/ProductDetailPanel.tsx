@@ -1,6 +1,7 @@
 import { Package, Plus } from 'lucide-react';
 import type { Product } from '../types';
 import { money } from '../utils/formatters';
+import './ProductDetailPanel.css';
 
 type ProductDetailPanelProps = {
   product: Product | null;

@@ -1,0 +1,72 @@
+.inventory {
+  display: grid;
+  gap: 10px;
+}
+
+.inventoryRow {
+  align-items: end;
+  border: 1px solid #eef1e8;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  min-width: 0;
+  padding: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  min-width: 0;
+}
+
+.field span {
+  color: #667085;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.newProduct {
+  background: #fbfcf8;
+  border-color: #d7dfcd;
+  margin-top: 6px;
+}
+
+.newProduct .iconText {
+  align-self: end;
+  width: 100%;
+}
+
+.toggle {
+  align-items: center;
+  display: grid;
+  gap: 5px 8px;
+  grid-template-columns: auto 1fr;
+  margin: 0;
+  min-height: 61px;
+}
+
+.toggle span {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.toggle input {
+  min-height: auto;
+  width: auto;
+}
+
+@media (max-width: 680px) {
+  .inventoryRow {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .toggle {
+    align-items: center;
+    min-height: 40px;
+  }
+}

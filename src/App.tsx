@@ -6,6 +6,7 @@ import { MenuPanel } from './components/MenuPanel';
 import { OrdersPanel } from './components/OrdersPanel';
 import { ProductDetailPanel } from './components/ProductDetailPanel';
 import { Topbar } from './components/Topbar';
+import './App.css';
 import {
   API_URL,
   createGroup,
