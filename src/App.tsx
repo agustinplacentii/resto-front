@@ -102,6 +102,8 @@ export function App() {
   const [accountSearchResult, setAccountSearchResult] = useState<AccountSearchResult | null>(null);
   const [pendingPaidOrder, setPendingPaidOrder] = useState<Order | null>(null);
   const [pendingPriceEdit, setPendingPriceEdit] = useState<{ product: Product; price: number } | null>(null);
+  const [pendingCategoryEdit, setPendingCategoryEdit] = useState<{ product: Product; categoryName: string } | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Product | null>(null);
   const [passwordError, setPasswordError] = useState('');
   const [activeSection, setActiveSection] = useState<AppSection>('home');
   const [stockToast, setStockToast] = useState('');
@@ -213,10 +215,18 @@ export function App() {
     setAccountSearchValue(type === 'table' ? tableName : customerName);
   }
 
-  function changeTableName(value: string) {
+  function changeTableName(value: string, searchAutomatically = false) {
     setTableName(value);
     setAccountSearchType('table');
     setAccountSearchValue(value);
+
+    if (searchAutomatically) {
+      if (value.trim()) {
+        void searchAccountFor('table', value);
+      } else {
+        setAccountSearchResult(null);
+      }
+    }
   }
 
   function changeCustomerName(value: string) {
@@ -225,12 +235,8 @@ export function App() {
     setAccountSearchValue(value);
   }
 
-  async function searchAccount() {
+  async function searchAccountFor(searchType: 'table' | 'customer', searchValue: string) {
     setMessage('');
-    const selectedType = orderDestinationType === 'table' ? 'table' : 'customer';
-    const selectedValue = orderDestinationType === 'table' ? tableName : customerName;
-    const searchType = accountSearchValue.trim() ? accountSearchType : selectedType;
-    const searchValue = accountSearchValue.trim() ? accountSearchValue : selectedValue;
 
     setAccountSearchType(searchType);
     setAccountSearchValue(searchValue);
@@ -241,6 +247,15 @@ export function App() {
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'No se pudo buscar la cuenta.');
     }
+  }
+
+  async function searchAccount() {
+    const selectedType = orderDestinationType === 'table' ? 'table' : 'customer';
+    const selectedValue = orderDestinationType === 'table' ? tableName : customerName;
+    const searchType = accountSearchValue.trim() ? accountSearchType : selectedType;
+    const searchValue = accountSearchValue.trim() ? accountSearchValue : selectedValue;
+
+    await searchAccountFor(searchType, searchValue);
   }
 
   function addToCart(product: Product) {
@@ -554,6 +569,72 @@ export function App() {
     }
   }
 
+  function requestCategoryEdit(product: Product, categoryName: string) {
+    setPasswordError('');
+    setPendingCategoryEdit({ product, categoryName });
+  }
+
+  async function confirmCategoryEdit(password: string) {
+    if (!pendingCategoryEdit || !sessionUser) {
+      return;
+    }
+
+    try {
+      await login(sessionUser.username, password);
+    } catch {
+      setPasswordError('La contrasena no coincide.');
+      return;
+    }
+
+    const { product, categoryName } = pendingCategoryEdit;
+
+    try {
+      await updateProduct({ ...product, category: categoryName });
+      setPendingCategoryEdit(null);
+      setPasswordError('');
+      setMessage(`Categoría de ${product.name} actualizada a ${categoryName}.`);
+      await loadData(selectedGroup?.id);
+      await loadHistory();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'No se pudo actualizar la categoría.');
+    }
+  }
+
+  function requestProductDelete(product: Product) {
+    if (product.stock > 0) {
+      setMessage('No se puede eliminar un producto que tiene stock.');
+      return;
+    }
+    setPasswordError('');
+    setPendingDelete(product);
+  }
+
+  async function confirmProductDelete(password: string) {
+    if (!pendingDelete || !sessionUser) {
+      return;
+    }
+
+    try {
+      await login(sessionUser.username, password);
+    } catch {
+      setPasswordError('La contrasena no coincide.');
+      return;
+    }
+
+    const product = pendingDelete;
+
+    try {
+      await deleteProduct(product.id);
+      setPendingDelete(null);
+      setPasswordError('');
+      setMessage(`Producto ${product.name} eliminado.`);
+      await loadData(selectedGroup?.id);
+      await loadHistory();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'No se pudo eliminar el producto.');
+    }
+  }
+
   async function startCashRegister() {
     try {
       const cashRegister = await openCashRegister(openingDateTime);
@@ -589,7 +670,14 @@ export function App() {
   if (isProductsPage) {
     return (
       <>
-        <ProductsPage products={allProducts} onBack={() => setIsProductsPage(false)} onPriceEdit={requestPriceEdit} />
+        <ProductsPage 
+          products={allProducts} 
+          groups={groups}
+          onBack={() => setIsProductsPage(false)} 
+          onPriceEdit={requestPriceEdit}
+          onCategoryEdit={requestCategoryEdit}
+          onDelete={requestProductDelete}
+        />
         {pendingPriceEdit && (
           <PasswordModal
             title="Cambiar precio"
@@ -601,6 +689,32 @@ export function App() {
               setPasswordError('');
             }}
             onConfirm={confirmPriceEdit}
+          />
+        )}
+        {pendingCategoryEdit && (
+          <PasswordModal
+            title="Cambiar categoría"
+            description={`Nueva categoría para ${pendingCategoryEdit.product.name}: ${pendingCategoryEdit.categoryName}.`}
+            confirmLabel="Actualizar categoría"
+            error={passwordError}
+            onCancel={() => {
+              setPendingCategoryEdit(null);
+              setPasswordError('');
+            }}
+            onConfirm={confirmCategoryEdit}
+          />
+        )}
+        {pendingDelete && (
+          <PasswordModal
+            title="Eliminar producto"
+            description={`¿Estás seguro que deseas eliminar ${pendingDelete.name}? Esta acción no se puede deshacer.`}
+            confirmLabel="Sí, eliminar"
+            error={passwordError}
+            onCancel={() => {
+              setPendingDelete(null);
+              setPasswordError('');
+            }}
+            onConfirm={confirmProductDelete}
           />
         )}
       </>

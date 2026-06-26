@@ -10,7 +10,7 @@ type OrderDestinationPanelProps = {
   tableName: string;
   onCustomerNameChange: (customerName: string) => void;
   onOrderDestinationTypeChange: (type: 'table' | 'name') => void;
-  onTableNameChange: (tableName: string) => void;
+  onTableNameChange: (tableName: string, searchAutomatically?: boolean) => void;
 };
 
 export function OrderDestinationPanel({
@@ -22,9 +22,9 @@ export function OrderDestinationPanel({
   onOrderDestinationTypeChange,
   onTableNameChange
 }: OrderDestinationPanelProps) {
-  function chooseTable(table: string) {
+  function chooseTable(table: string, searchAutomatically = false) {
     onOrderDestinationTypeChange('table');
-    onTableNameChange(table);
+    onTableNameChange(table, searchAutomatically);
   }
 
   function chooseName(name: string) {
@@ -65,7 +65,11 @@ export function OrderDestinationPanel({
         )}
       </div>
 
-      <TableMap orders={orders} tableName={orderDestinationType === 'table' ? tableName : ''} onTableNameChange={chooseTable} />
+      <TableMap
+        orders={orders}
+        tableName={orderDestinationType === 'table' ? tableName : ''}
+        onTableNameChange={(table) => chooseTable(table, true)}
+      />
     </section>
   );
 }

@@ -25,7 +25,7 @@
   border-radius: 8px;
   display: grid;
   gap: 12px;
-  grid-template-columns: 44px minmax(180px, 1fr) minmax(130px, 0.7fr) 90px 86px 120px;
+  grid-template-columns: 44px minmax(180px, 1fr) minmax(130px, 0.7fr) 90px 86px 1fr;
   padding: 14px;
 }
 
@@ -62,6 +62,12 @@
   text-align: center;
 }
 
+.productCatalogIconWithDelete {
+  position: relative;
+  width: 44px;
+  height: 44px;
+}
+
 .productCatalogIcon {
   align-items: center;
   background: #f3f6ec;
@@ -71,6 +77,80 @@
   height: 44px;
   justify-content: center;
   width: 44px;
+}
+
+.productActionsGroup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.categorySelector {
+  padding: 8px 12px;
+  border: 1px solid #dde4d2;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #ffffff;
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.categorySelector:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deleteBtn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: #f3f6ec;
+  border-radius: 4px;
+  color: #a3462a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  background: #e8ede2;
+}
+
+.deleteBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.changePriceBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #dde4d2;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #a3462a;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.changePriceBtn:hover:not(:disabled) {
+  background: #f9f9f9;
+}
+
+.changePriceBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 @media (max-width: 780px) {
@@ -88,11 +168,14 @@
     grid-template-columns: 44px 1fr;
   }
 
-  .productCatalogCard b,
+  .productCatalogCard > :not(.productCatalogIconWithDelete):not(.productCatalogIcon) {
+    grid-column: 2;
+  }
+
+  .productCatalogCard div:nth-child(2),
+  .productCatalogCard div:nth-child(3),
   .productCatalogCard small,
-  .productCatalogCard em,
-  .productCatalogCard .iconText,
-  .productPriceEditor {
+  .productCatalogCard em {
     grid-column: 2;
   }
 }

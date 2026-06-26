@@ -41,6 +41,7 @@ export function InventoryPanel({
 }: InventoryPanelProps) {
   const [mode, setMode] = useState<'new-product' | 'stock'>('new-product');
   const [stockSearch, setStockSearch] = useState('');
+  const [focusedDraftField, setFocusedDraftField] = useState<'price' | 'stock' | null>(null);
   const availableProducts = useMemo(() => products.filter((product) => product.isActive), [products]);
   const matchedProducts = useMemo(() => {
     const search = stockSearch.trim().toLocaleLowerCase();
@@ -121,11 +122,25 @@ export function InventoryPanel({
           </label>
           <label className="field">
             <span>Precio</span>
-            <input type="number" value={draft.price} onChange={(event) => onDraftChange({ ...draft, price: Number(event.target.value) })} placeholder="Precio" />
+            <input
+              type="number"
+              value={focusedDraftField === 'price' && draft.price === 0 ? '' : draft.price}
+              onBlur={() => setFocusedDraftField(null)}
+              onChange={(event) => onDraftChange({ ...draft, price: Number(event.target.value) })}
+              onFocus={() => setFocusedDraftField('price')}
+              placeholder="Precio"
+            />
           </label>
           <label className="field">
             <span>Stock inicial</span>
-            <input type="number" value={draft.stock} onChange={(event) => onDraftChange({ ...draft, stock: Number(event.target.value) })} placeholder="Stock" />
+            <input
+              type="number"
+              value={focusedDraftField === 'stock' && draft.stock === 0 ? '' : draft.stock}
+              onBlur={() => setFocusedDraftField(null)}
+              onChange={(event) => onDraftChange({ ...draft, stock: Number(event.target.value) })}
+              onFocus={() => setFocusedDraftField('stock')}
+              placeholder="Stock"
+            />
           </label>
           <button className="iconText" type="button" onClick={onAddProduct}>
             <Plus size={18} />
