@@ -1,47 +1,54 @@
 .orderDestinationPanel {
   display: grid;
   gap: 6px;
+  align-content: start;
+  height: fit-content;
 }
 
 .destinationHeader {
   display: grid;
-  gap: 12px;
   grid-template-columns: auto auto;
+  gap: 12px;
+  align-items: center;
   width: fit-content;
-  align-items: start;
 }
 
 .destinationHeader label {
-  margin-bottom: 0;
-  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
 }
 
 .destinationToggle {
   display: grid;
-  gap: 8px;
   grid-template-columns: 1fr 1fr;
-  height: fit-content;
+  gap: 8px;
+  align-self: center;
 }
 
 .destinationToggle button {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 40px;
+  padding: 0 14px;
+
   background: #f6f8f2;
   border: 1px solid #cfd8c2;
   border-radius: 7px;
   color: #47523a;
   cursor: pointer;
-  display: inline-flex;
   font-weight: 700;
-  gap: 7px;
-  justify-content: center;
-  min-height: 40px;
-  height: fit-content;
 }
 
 .destinationToggle button.selected {
   background: #607044;
   border-color: #607044;
-  color: #ffffff;
+  color: #fff;
 }
 
 @media (max-width: 680px) {
