@@ -153,6 +153,40 @@
   cursor: not-allowed;
 }
 
+.productSearchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #dde4d2;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-left: auto;
+  min-width: 200px;
+  color: #667085;
+}
+
+.productSearchBox input {
+  background: transparent;
+  border: none;
+  flex: 1;
+  font-size: 14px;
+  outline: none;
+  padding: 0;
+  color: #1a1a1a;
+}
+
+.productSearchBox input::placeholder {
+  color: #a0a0a0;
+}
+
+.noResults {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
 @media (max-width: 780px) {
   .productsPage {
     padding: 16px;
@@ -161,6 +195,11 @@
   .productsPageHeader {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .productSearchBox {
+    margin-left: 0;
+    width: 100%;
   }
 
   .productCatalogCard {

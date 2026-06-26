@@ -1,4 +1,4 @@
-import { ArrowLeft, DollarSign, Package, Edit2, Trash2 } from 'lucide-react';
+import { ArrowLeft, DollarSign, Package, Edit2, Trash2, Search } from 'lucide-react';
 import { useState } from 'react';
 import type { Product, ProductGroup } from '../types';
 import { money } from '../utils/formatters';
@@ -16,6 +16,13 @@ type ProductsPageProps = {
 export function ProductsPage({ products, groups, onBack, onPriceEdit, onCategoryEdit, onDelete }: ProductsPageProps) {
   const [priceDrafts, setPriceDrafts] = useState<Record<number, number>>({});
   const [categoryDrafts, setCategoryDrafts] = useState<Record<number, string>>({});
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (product.productGroupName?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+    (product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
+  );
 
   return (
     <main className="productsPage">
@@ -28,79 +35,92 @@ export function ProductsPage({ products, groups, onBack, onPriceEdit, onCategory
           <p className="eyebrow">Saoko</p>
           <h1>Todos los productos</h1>
         </div>
+        <div className="productSearchBox">
+          <Search size={18} />
+          <input
+            type="text"
+            placeholder="Buscar productos..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+        </div>
       </header>
       <section className="productsCatalog">
-        {products.map((product) => (
-          <article className="productCatalogCard" key={product.id}>
-            <div className="productCatalogIconWithDelete">
-              <div className="productCatalogIcon">
-                <Package size={20} />
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <article className="productCatalogCard" key={product.id}>
+              <div className="productCatalogIconWithDelete">
+                <div className="productCatalogIcon">
+                  <Package size={20} />
+                </div>
+                <button
+                  className="deleteBtn"
+                  type="button"
+                  onClick={() => onDelete(product)}
+                  disabled={product.stock > 0}
+                  title={product.stock > 0 ? 'No se puede eliminar productos con stock' : 'Eliminar producto'}
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
-              <button
-                className="deleteBtn"
-                type="button"
-                onClick={() => onDelete(product)}
-                disabled={product.stock > 0}
-                title={product.stock > 0 ? 'No se puede eliminar productos con stock' : 'Eliminar producto'}
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-            <div>
-              <strong>{product.name}</strong>
-              <select
-                className="categorySelector"
-                value={categoryDrafts[product.id] ?? (product.productGroupName ?? product.category ?? '')}
-                onChange={(event) => {
-                  const newCategory = event.target.value;
-                  setCategoryDrafts((current) => ({ ...current, [product.id]: newCategory }));
-                  if (newCategory) {
-                    const selectedGroup = groups.find((g) => g.name === newCategory);
-                    if (selectedGroup) {
-                      onCategoryEdit(product, newCategory);
-                      setCategoryDrafts((current) => {
-                        const { [product.id]: _, ...rest } = current;
-                        return rest;
-                      });
+              <div>
+                <strong>{product.name}</strong>
+                <select
+                  className="categorySelector"
+                  value={categoryDrafts[product.id] ?? (product.productGroupName ?? product.category ?? '')}
+                  onChange={(event) => {
+                    const newCategory = event.target.value;
+                    setCategoryDrafts((current) => ({ ...current, [product.id]: newCategory }));
+                    if (newCategory) {
+                      const selectedGroup = groups.find((g) => g.name === newCategory);
+                      if (selectedGroup) {
+                        onCategoryEdit(product, newCategory);
+                        setCategoryDrafts((current) => {
+                          const { [product.id]: _, ...rest } = current;
+                          return rest;
+                        });
+                      }
                     }
+                  }}
+                  title="Cambiar categoría del producto"
+                >
+                  <option value="">Categoría</option>
+                  {groups.map((group) => (
+                    <option key={group.id} value={group.name}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="productPriceEditor">
+                <b>{money(product.price)}</b>
+                <input
+                  aria-label={`Precio de ${product.name}`}
+                  type="number"
+                  min="0"
+                  value={priceDrafts[product.id] ?? product.price}
+                  onChange={(event) =>
+                    setPriceDrafts((current) => ({ ...current, [product.id]: Number(event.target.value) }))
                   }
-                }}
-                title="Cambiar categoría del producto"
-              >
-                <option value="">Categoría</option>
-                {groups.map((group) => (
-                  <option key={group.id} value={group.name}>
-                    {group.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="productPriceEditor">
-              <b>{money(product.price)}</b>
-              <input
-                aria-label={`Precio de ${product.name}`}
-                type="number"
-                min="0"
-                value={priceDrafts[product.id] ?? product.price}
-                onChange={(event) =>
-                  setPriceDrafts((current) => ({ ...current, [product.id]: Number(event.target.value) }))
-                }
-              />
-              <button
-                className="changePriceBtn"
-                type="button"
-                onClick={() => onPriceEdit(product, priceDrafts[product.id] ?? product.price)}
-                disabled={(priceDrafts[product.id] ?? product.price) === product.price || (priceDrafts[product.id] ?? 0) < 0}
-                title="Cambiar precio del producto"
-              >
-                <DollarSign size={14} />
-                Cambiar precio
-              </button>
-            </div>
-            <small>Stock {product.stock}</small>
-            <em>{product.isActive ? 'Activo' : 'Inactivo'}</em>
-          </article>
-        ))}
+                />
+                <button
+                  className="changePriceBtn"
+                  type="button"
+                  onClick={() => onPriceEdit(product, priceDrafts[product.id] ?? product.price)}
+                  disabled={(priceDrafts[product.id] ?? product.price) === product.price || (priceDrafts[product.id] ?? 0) < 0}
+                  title="Cambiar precio del producto"
+                >
+                  <DollarSign size={14} />
+                  Cambiar precio
+                </button>
+              </div>
+              <small>Stock {product.stock}</small>
+              <em>{product.isActive ? 'Activo' : 'Inactivo'}</em>
+            </article>
+          ))
+        ) : (
+          <p className="noResults">No se encontraron productos</p>
+        )}
       </section>
     </main>
   );
