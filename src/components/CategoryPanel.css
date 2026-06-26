@@ -1,4 +1,88 @@
 .categoryForm {
   display: grid;
   gap: 10px;
+  max-width: 520px;
+}
+
+.categoryList {
+  display: grid;
+  gap: 10px;
+}
+
+.categoryDivider {
+  align-items: center;
+  color: #667085;
+  display: flex;
+  font-size: 12px;
+  font-weight: 800;
+  gap: 12px;
+  margin: 22px 0 12px;
+  text-transform: uppercase;
+}
+
+.categoryDivider::after {
+  background: #dde4d2;
+  content: "";
+  flex: 1;
+  height: 1px;
+}
+
+.categoryItem {
+  align-items: center;
+  border: 1px solid #dde4d2;
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 12px;
+}
+
+.categoryFields {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.categoryFields div {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.categoryFields strong {
+  color: #1f2933;
+}
+
+.categoryFields span,
+.categoryFields p {
+  color: #667085;
+}
+
+.categoryFields p {
+  margin: 0;
+}
+
+.categoryActions {
+  display: flex;
+  gap: 8px;
+}
+
+.iconOnly {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0;
+  width: 40px;
+}
+
+@media (max-width: 640px) {
+  .categoryItem {
+    grid-template-columns: 1fr;
+  }
+
+  .categoryActions {
+    justify-content: flex-start;
+  }
 }

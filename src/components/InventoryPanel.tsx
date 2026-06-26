@@ -1,4 +1,5 @@
-import { List, MinusCircle, Package, Plus, PlusCircle } from 'lucide-react';
+import { List, MinusCircle, Package, Plus, PlusCircle, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Product, ProductDraft, ProductGroup } from '../types';
 import './InventoryPanel.css';
 
@@ -14,9 +15,9 @@ type InventoryPanelProps = {
   stockAdditions: Record<number, number>;
   stockDiscounts: Record<number, StockDiscountDraft>;
   onAddProduct: () => void;
+  onDeleteProduct: (product: Product) => void;
   onDraftChange: (draft: ProductDraft) => void;
   onOpenProducts: () => void;
-  onSaveProduct: (product: Product) => void;
   onStockAddition: (product: Product) => void;
   onStockAdditionChange: (productId: number, quantity: number) => void;
   onStockDiscount: (product: Product) => void;
@@ -30,14 +31,44 @@ export function InventoryPanel({
   stockAdditions,
   stockDiscounts,
   onAddProduct,
+  onDeleteProduct,
   onDraftChange,
   onOpenProducts,
-  onSaveProduct,
   onStockAddition,
   onStockAdditionChange,
   onStockDiscount,
   onStockDiscountChange
 }: InventoryPanelProps) {
+  const [mode, setMode] = useState<'new-product' | 'stock'>('new-product');
+  const [stockSearch, setStockSearch] = useState('');
+  const availableProducts = useMemo(() => products.filter((product) => product.isActive), [products]);
+  const matchedProducts = useMemo(() => {
+    const search = stockSearch.trim().toLocaleLowerCase();
+    if (!search) {
+      return availableProducts;
+    }
+
+    return availableProducts.filter((product) =>
+      `${product.name} ${product.category} ${product.productGroupName ?? ''}`.toLocaleLowerCase().includes(search)
+    );
+  }, [availableProducts, stockSearch]);
+  const [selectedStockProductId, setSelectedStockProductId] = useState(availableProducts[0]?.id ?? 0);
+  const selectedStockProduct = availableProducts.find((product) => product.id === selectedStockProductId) ?? matchedProducts[0];
+  const selectedStockQuantity = selectedStockProduct ? stockAdditions[selectedStockProduct.id] ?? 1 : 1;
+  const selectedStockDiscount = selectedStockProduct ? stockDiscounts[selectedStockProduct.id] ?? { quantity: 1, reason: 'courtesy' as const } : null;
+
+  useEffect(() => {
+    if (!matchedProducts.some((product) => product.id === selectedStockProductId)) {
+      setSelectedStockProductId(matchedProducts[0]?.id ?? 0);
+    }
+  }, [matchedProducts, selectedStockProductId]);
+
+  function selectStockProduct(productId: number) {
+    setSelectedStockProductId(productId);
+    onStockAdditionChange(productId, stockAdditions[productId] ?? 1);
+    onStockDiscountChange(productId, stockDiscounts[productId] ?? { quantity: 1, reason: 'courtesy' });
+  }
+
   return (
     <div className="panel">
       <div className="inventoryHeader">
@@ -50,134 +81,28 @@ export function InventoryPanel({
           Ver productos
         </button>
       </div>
-      <div className="inventory">
-        {products.map((product) => (
-          <article className="inventoryCard" key={product.id}>
-            <div className="inventoryRow">
-              <label className="field">
-                <span>Producto</span>
-                <input
-                  defaultValue={product.name}
-                  onBlur={(event) =>
-                    onSaveProduct({
-                      ...product,
-                      name: event.target.value
-                    })
-                  }
-                />
-              </label>
-              <label className="field">
-                <span>Categoria</span>
-                <select
-                  value={product.productGroupId ?? 0}
-                  onChange={(event) => {
-                    const groupId = Number(event.target.value);
-                    const group = groups.find((item) => item.id === groupId);
-                    onSaveProduct({ ...product, productGroupId: groupId, category: group?.name ?? product.category });
-                  }}
-                >
-                  <option value={0}>Sin categoria</option>
-                  {groups.map((group) => (
-                    <option key={group.id} value={group.id}>{group.name}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="field">
-                <span>Medida</span>
-                <input
-                  defaultValue={product.measure}
-                  onBlur={(event) =>
-                    onSaveProduct({
-                      ...product,
-                      measure: event.target.value
-                    })
-                  }
-                />
-              </label>
-              <label className="field">
-                <span>Precio</span>
-                <input
-                  type="number"
-                  defaultValue={product.price}
-                  onBlur={(event) =>
-                    onSaveProduct({
-                      ...product,
-                      price: Number(event.target.value)
-                    })
-                  }
-                />
-              </label>
-              <label className="field">
-                <span>Stock</span>
-                <input
-                  type="number"
-                  defaultValue={product.stock}
-                  onBlur={(event) =>
-                    onSaveProduct({
-                      ...product,
-                      stock: Number(event.target.value)
-                    })
-                  }
-                />
-              </label>
-              <label className="toggle field">
-                <span>Estado</span>
-                <input type="checkbox" checked={product.isActive} onChange={(event) => onSaveProduct({ ...product, isActive: event.target.checked })} />
-                Activo
-              </label>
-            </div>
-            <div className="stockMovements">
-              <div className="stockMovement stockAddition">
-                <label className="field">
-                  <span>Agregar stock</span>
-                  <input
-                    type="number"
-                    min="1"
-                    value={stockAdditions[product.id] ?? 1}
-                    onChange={(event) => onStockAdditionChange(product.id, Number(event.target.value))}
-                  />
-                </label>
-                <button className="iconText stockMoveButton" onClick={() => onStockAddition(product)}>
-                  <PlusCircle size={18} />
-                  Agregar stock
-                </button>
-              </div>
-              <div className="stockMovement stockDiscount">
-                <label className="field">
-                  <span>Quitar</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max={product.stock}
-                    value={stockDiscounts[product.id]?.quantity ?? 1}
-                    onChange={(event) => onStockDiscountChange(product.id, {
-                      quantity: Number(event.target.value),
-                      reason: stockDiscounts[product.id]?.reason ?? 'courtesy'
-                    })}
-                  />
-                </label>
-                <label className="field">
-                  <span>Motivo</span>
-                  <select
-                    value={stockDiscounts[product.id]?.reason ?? 'courtesy'}
-                    onChange={(event) => onStockDiscountChange(product.id, {
-                      quantity: stockDiscounts[product.id]?.quantity ?? 1,
-                      reason: event.target.value as StockDiscountDraft['reason']
-                    })}
-                  >
-                    <option value="courtesy">Cortesia de la casa</option>
-                    <option value="damaged">Producto dañado</option>
-                  </select>
-                </label>
-                <button className="iconText stockDiscountButton" onClick={() => onStockDiscount(product)} disabled={product.stock <= 0}>
-                  <MinusCircle size={18} />
-                  Quitar stock
-                </button>
-              </div>
-            </div>
-          </article>
-        ))}
-        <div className="inventoryRow newProduct">
+
+      <div className="inventoryModes">
+        <button
+          className={mode === 'new-product' ? 'selected' : ''}
+          type="button"
+          onClick={() => setMode('new-product')}
+        >
+          <Plus size={18} />
+          Cargar nuevo producto
+        </button>
+        <button
+          className={mode === 'stock' ? 'selected' : ''}
+          type="button"
+          onClick={() => setMode('stock')}
+        >
+          <PlusCircle size={18} />
+          Stock de producto
+        </button>
+      </div>
+
+      {mode === 'new-product' && (
+        <div className="inventoryRow inventoryForm">
           <label className="field">
             <span>Producto</span>
             <input value={draft.name} onChange={(event) => onDraftChange({ ...draft, name: event.target.value })} placeholder="Nuevo producto" />
@@ -195,23 +120,117 @@ export function InventoryPanel({
             </select>
           </label>
           <label className="field">
-            <span>Medida</span>
-            <input value={draft.measure} onChange={(event) => onDraftChange({ ...draft, measure: event.target.value })} placeholder="Medida" />
-          </label>
-          <label className="field">
             <span>Precio</span>
             <input type="number" value={draft.price} onChange={(event) => onDraftChange({ ...draft, price: Number(event.target.value) })} placeholder="Precio" />
           </label>
           <label className="field">
-            <span>Stock</span>
+            <span>Stock inicial</span>
             <input type="number" value={draft.stock} onChange={(event) => onDraftChange({ ...draft, stock: Number(event.target.value) })} placeholder="Stock" />
           </label>
-          <button className="iconText" onClick={onAddProduct}>
+          <button className="iconText" type="button" onClick={onAddProduct}>
             <Plus size={18} />
             Agregar
           </button>
         </div>
-      </div>
+      )}
+
+      {mode === 'stock' && (
+        <div className="inventoryForm stockLoadForm">
+          <label className="field stockSearchField">
+            <span>Buscar producto</span>
+            <input
+              value={stockSearch}
+              onChange={(event) => setStockSearch(event.target.value)}
+              placeholder="Escribi para buscar..."
+            />
+          </label>
+          <label className="field">
+            <span>Producto disponible</span>
+            <select
+              value={selectedStockProduct?.id ?? 0}
+              onChange={(event) => selectStockProduct(Number(event.target.value))}
+            >
+              {matchedProducts.length === 0 && <option value={0}>Sin productos disponibles</option>}
+              {matchedProducts.map((product) => (
+                <option key={product.id} value={product.id}>
+                  {product.name} - stock actual {product.stock}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            <span>Cantidad a cargar</span>
+            <input
+              type="number"
+              min="1"
+              value={selectedStockQuantity}
+              onChange={(event) => selectedStockProduct && onStockAdditionChange(selectedStockProduct.id, Number(event.target.value))}
+            />
+          </label>
+          <button
+            className="iconText stockMoveButton"
+            type="button"
+            onClick={() => selectedStockProduct && onStockAddition(selectedStockProduct)}
+            disabled={!selectedStockProduct}
+          >
+            <PlusCircle size={18} />
+            Cargar stock
+          </button>
+          <label className="field">
+            <span>Cantidad a quitar</span>
+            <input
+              type="number"
+              min="1"
+              max={selectedStockProduct?.stock ?? 1}
+              value={selectedStockDiscount?.quantity ?? 1}
+              onChange={(event) =>
+                selectedStockProduct &&
+                selectedStockDiscount &&
+                onStockDiscountChange(selectedStockProduct.id, {
+                  ...selectedStockDiscount,
+                  quantity: Number(event.target.value)
+                })
+              }
+            />
+          </label>
+          <label className="field">
+            <span>Motivo</span>
+            <select
+              value={selectedStockDiscount?.reason ?? 'courtesy'}
+              onChange={(event) =>
+                selectedStockProduct &&
+                selectedStockDiscount &&
+                onStockDiscountChange(selectedStockProduct.id, {
+                  ...selectedStockDiscount,
+                  reason: event.target.value as StockDiscountDraft['reason']
+                })
+              }
+            >
+              <option value="courtesy">Cortesia</option>
+              <option value="damaged">Producto danado</option>
+            </select>
+          </label>
+          <button
+            className="iconText stockDiscountButton"
+            type="button"
+            onClick={() => selectedStockProduct && onStockDiscount(selectedStockProduct)}
+            disabled={!selectedStockProduct || selectedStockProduct.stock <= 0}
+          >
+            <MinusCircle size={18} />
+            Quitar stock
+          </button>
+          <button
+            className="iconText deleteButton"
+            type="button"
+            onClick={() => selectedStockProduct && onDeleteProduct(selectedStockProduct)}
+            disabled={!selectedStockProduct || selectedStockProduct.stock > 0}
+            title={selectedStockProduct?.stock ? 'Solo se puede eliminar sin stock' : 'Eliminar producto'}
+          >
+            <Trash2 size={18} />
+            Eliminar producto
+          </button>
+        </div>
+      )}
     </div>
   );
 }

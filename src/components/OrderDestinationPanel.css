@@ -1,0 +1,50 @@
+.orderDestinationPanel {
+  display: grid;
+  gap: 14px;
+}
+
+.destinationHeader {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(180px, 0.3fr);
+}
+
+.destinationHeader label {
+  margin-bottom: 0;
+}
+
+.destinationToggle {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.destinationToggle button {
+  align-items: center;
+  background: #f6f8f2;
+  border: 1px solid #cfd8c2;
+  border-radius: 7px;
+  color: #47523a;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 700;
+  gap: 7px;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.destinationToggle button.selected {
+  background: #607044;
+  border-color: #607044;
+  color: #ffffff;
+}
+
+@media (max-width: 680px) {
+  .orderDestinationPanel {
+    min-height: auto;
+  }
+
+  .destinationHeader {
+    grid-template-columns: 1fr;
+  }
+}

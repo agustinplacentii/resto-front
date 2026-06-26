@@ -52,3 +52,18 @@
   border-color: #1f2933;
   color: #ffffff;
 }
+
+.loadMoreOrders {
+  align-items: center;
+  background: #f6f8f2;
+  border: 1px solid #cfd8c2;
+  border-radius: 7px;
+  color: #263228;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 800;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 12px;
+  width: 100%;
+}

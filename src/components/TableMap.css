@@ -1,0 +1,163 @@
+.tableMap {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+}
+
+.tableMapHeader {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.tableMapHeader .sectionTitle {
+  margin-bottom: 0;
+}
+
+.tableActions {
+  display: flex;
+  gap: 10px;
+}
+
+.tableAction {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cfd8c2;
+  border-radius: 7px;
+  color: #344054;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0;
+  width: 34px;
+}
+
+.locationEditor {
+  padding-right: 44px;
+  position: relative;
+}
+
+.locationDelete {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.locationControls {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 34px 34px;
+}
+
+.locationControls input {
+  font-size: 12px;
+  min-height: 34px;
+  padding: 7px 9px;
+}
+
+.roomMap {
+  aspect-ratio: auto;
+  background:
+    linear-gradient(90deg, rgba(96, 112, 68, 0.09) 1px, transparent 1px),
+    linear-gradient(rgba(96, 112, 68, 0.09) 1px, transparent 1px),
+    #f8faf4;
+  background-size: 25% 25%;
+  border: 2px solid #9aaa7f;
+  border-radius: 8px;
+  overflow: visible;
+  position: relative;
+  touch-action: none;
+  width: 100%;
+}
+
+.orderDestinationPanel .roomMap {
+  min-height: clamp(360px, calc(100vh - 330px), 560px);
+}
+
+.roomLocation {
+  background: #d9e5cf;
+  border: 1px solid #b9c8a5;
+  border-radius: 6px;
+  color: #607044;
+  display: inline-grid;
+  font-size: 11px;
+  font-weight: 800;
+  justify-items: center;
+  max-width: none;
+  overflow: visible;
+  padding: 4px 10px;
+  position: absolute;
+  user-select: none;
+  z-index: 2;
+}
+
+.roomLocationSizer,
+.roomLocationText {
+  grid-area: 1 / 1;
+  overflow: visible;
+  white-space: pre;
+}
+
+.roomLocationSizer {
+  visibility: hidden;
+}
+
+.roomLocationText {
+  text-align: center;
+  width: 100%;
+}
+
+.roomLocation.selected {
+  background: #607044;
+  border-color: #607044;
+  color: #ffffff;
+}
+
+.tableSquare {
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid #a7b58d;
+  border-radius: 6px;
+  box-shadow: 0 8px 18px rgba(36, 48, 31, 0.12);
+  color: #263228;
+  display: flex;
+  font-size: 16px;
+  font-weight: 900;
+  height: 54px;
+  justify-content: center;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+  user-select: none;
+  width: 54px;
+  z-index: 1;
+}
+
+.tableSquare.open {
+  border-color: #d49b35;
+}
+
+.tableSquare.selected {
+  background: #607044;
+  border-color: #607044;
+  box-shadow: 0 0 0 4px rgba(96, 112, 68, 0.18), 0 10px 22px rgba(36, 48, 31, 0.18);
+  color: #ffffff;
+}
+
+.tableSquare.selected.open {
+  border-color: #d49b35;
+  box-shadow: 0 0 0 4px rgba(212, 155, 53, 0.24), 0 10px 22px rgba(36, 48, 31, 0.18);
+}
+
+@media (max-width: 680px) {
+  .orderDestinationPanel .roomMap {
+    min-height: 360px;
+  }
+
+  .tableSquare {
+    height: 46px;
+    width: 46px;
+  }
+}

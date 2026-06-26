@@ -5,6 +5,20 @@
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
 }
 
+.menuSearch {
+  margin-bottom: 14px;
+}
+
+.menuSearch span {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.searchProductGrid {
+  margin-bottom: 12px;
+}
+
 .groupCard,
 .productButton {
   background: #fbfcf8;
@@ -21,6 +35,10 @@
 .groupCard:hover,
 .productButton:hover {
   border-color: #607044;
+}
+
+.productButton:disabled {
+  cursor: not-allowed;
 }
 
 .groupCard strong,

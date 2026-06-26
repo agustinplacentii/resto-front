@@ -15,6 +15,34 @@
   margin-bottom: 0;
 }
 
+.inventoryModes {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 14px;
+}
+
+.inventoryModes button {
+  align-items: center;
+  background: #f6f8f2;
+  border: 1px solid #cfd8c2;
+  border-radius: 7px;
+  color: #47523a;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 800;
+  gap: 8px;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 12px;
+}
+
+.inventoryModes button.selected {
+  background: #607044;
+  border-color: #607044;
+  color: #ffffff;
+}
+
 .inventoryCard {
   border: 1px solid #eef1e8;
   border-radius: 8px;
@@ -29,7 +57,7 @@
   align-items: end;
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   min-width: 0;
 }
 
@@ -54,7 +82,8 @@
   width: 100%;
 }
 
-.newProduct {
+.newProduct,
+.inventoryForm {
   background: #fbfcf8;
   border: 1px solid #d7dfcd;
   border-radius: 8px;
@@ -62,9 +91,22 @@
   padding: 12px;
 }
 
-.newProduct .iconText {
+.newProduct .iconText,
+.inventoryForm .iconText {
   align-self: end;
   width: 100%;
+}
+
+.stockLoadForm {
+  align-items: end;
+  display: grid;
+  gap: 10px;
+  grid-template-columns:
+    minmax(180px, 0.9fr)
+    minmax(220px, 1.1fr)
+    minmax(130px, 0.45fr)
+    minmax(150px, 0.5fr);
+  min-width: 0;
 }
 
 .stockMovements {
@@ -113,6 +155,7 @@
 
 .deleteButton {
   color: #d11a2a;
+  width: 100%;
 }
 
 .toggle {
@@ -140,7 +183,16 @@
     flex-direction: column;
   }
 
+  .inventoryModes {
+    grid-template-columns: 1fr;
+  }
+
   .inventoryRow {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .stockLoadForm {
     align-items: stretch;
     grid-template-columns: 1fr;
   }

@@ -30,12 +30,21 @@ export type OrderItem = {
 export type Order = {
   id: number;
   tableName: string;
+  customerName: string;
   notes: string;
   total: number;
   status: 'Open' | 'Paid' | 'Cancelled';
   createdAt: string;
+  paidAt: string | null;
   items: OrderItem[];
   invoiceUrl: string;
+};
+
+export type AccountSearchResult = {
+  searchType: 'table' | 'customer';
+  searchValue: string;
+  total: number;
+  orders: Order[];
 };
 
 export type CartItem = {
@@ -61,4 +70,26 @@ export type ActivityLog = {
   type: 'stock-added' | 'stock-removed' | 'invoice-created' | string;
   description: string;
   createdAt: string;
+};
+
+export type CashRegister = {
+  id: number;
+  openedAt: string;
+  closedAt: string | null;
+  total: number;
+  itemSummaries: CashRegisterItemSummary[];
+  paidOrders: Order[];
+};
+
+export type CashRegisterItemSummary = {
+  productId: number;
+  productName: string;
+  measure: string;
+  quantity: number;
+  total: number;
+};
+
+export type SessionUser = {
+  id: number;
+  username: string;
 };
