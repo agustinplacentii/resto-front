@@ -84,6 +84,8 @@ export function TableMap({ orders, tableName, onTableNameChange }: TableMapProps
   const [draggedLocationId, setDraggedLocationId] = useState<number | null>(null);
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
   const [locationName, setLocationName] = useState('');
+  const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const selectedTable = getTableNumber(tableName);
   const tables = layout.tables;
   const locations = layout.locations;
@@ -278,15 +280,29 @@ export function TableMap({ orders, tableName, onTableNameChange }: TableMapProps
               onClick={() => selectTable(table.id)}
               onPointerDown={(event) => {
                 setDraggedTableId(table.id);
+                setDragStartPos({ x: event.clientX, y: event.clientY });
+                setIsDragging(false);
                 event.currentTarget.setPointerCapture(event.pointerId);
-                selectTable(table.id);
               }}
               onPointerMove={(event) => {
-                if (draggedTableId === table.id) {
-                  moveTable(table.id, event.clientX, event.clientY);
+                if (draggedTableId === table.id && dragStartPos) {
+                  const distance = Math.sqrt(
+                    Math.pow(event.clientX - dragStartPos.x, 2) +
+                    Math.pow(event.clientY - dragStartPos.y, 2)
+                  );
+                  
+                  // Only start dragging if movement is more than 5 pixels
+                  if (distance > 5 || isDragging) {
+                    setIsDragging(true);
+                    moveTable(table.id, event.clientX, event.clientY);
+                  }
                 }
               }}
-              onPointerUp={() => setDraggedTableId(null)}
+              onPointerUp={() => {
+                setDraggedTableId(null);
+                setDragStartPos(null);
+                setIsDragging(false);
+              }}
             >
               {table.id}
             </button>
